@@ -1,0 +1,14 @@
+# Zig
+.zig-cache/
+zig-out/
+release/
+debug/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Build artifacts
+build/
