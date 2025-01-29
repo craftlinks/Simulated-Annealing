@@ -1,0 +1,13 @@
+.{
+    .name = "simulated-annealing",
+    .version = "0.0.1",
+    .minimum_zig_version = "0.13.0",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+    .dependencies = .{
+        .simulated_annealing = .{ .path = "src/simulated_annealing" },
+    }
+}

@@ -1,5 +1,5 @@
 const std = @import("std");
-const sa = @import("simulated_annealing.zig");
+const sa = @import("simulated_annealing");
 
 // User-defined context
 const Context = struct {

@@ -1,24 +1,33 @@
 const std = @import("std");
 
+
+pub const examples = struct {
+    pub const simple_quadratic = @import("src/examples/simple_quadratic/build.zig");
+};
+
+
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const exe = b.addExecutable(.{
-        .name = "zigSA",
-        .root_source_file = b.path("src/main.zig"),
+    const options = .{
         .target = target,
         .optimize = optimize,
-    });
+    };
 
-    b.installArtifact(exe);
+    buildAndInstallSamples(b,  options, examples);
+}
 
-    const run_cmd = b.addRunArtifact(exe);
-    run_cmd.step.dependOn(b.getInstallStep());
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
+
+fn buildAndInstallSamples(b: *std.Build, options: anytype, comptime samples: anytype) void {
+    inline for (comptime std.meta.declarations(samples)) |d| {
+        const exe = @field(samples, d.name).build(b, options);
+        const install_exe = b.addInstallArtifact(exe, .{});
+        b.getInstallStep().dependOn(&install_exe.step);
+        b.step(d.name, "Build the " ++ d.name ++ " example").dependOn(&install_exe.step);
+
+        const run_cmd = b.addRunArtifact(exe);
+        run_cmd.step.dependOn(&install_exe.step);
+        b.step( "run_" ++ d.name, "Run the " ++ d.name ++ " example").dependOn(&run_cmd.step);
     }
-
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
 }
